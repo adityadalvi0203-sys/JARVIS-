@@ -109,17 +109,40 @@
       : 'I do not understand that yet. My thinking engine is added in a later step. For now, ask me the time or the date.';
   }
 
-  function handleInput(text) {
+async function handleInput(text) {
     text = (text || '').trim();
     if (!text) return;
+
     addMsg('user', text);
     setState('thinking');
-    setTimeout(() => {
-      const r = brain(text);
-      addMsg('jarvis', r);
-      speak(r);
-    }, 450);
-  }
+
+    try {
+      const response = await fetch(
+        'https://wild-queen-8906.adityadalvi0203.workers.dev',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: text })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'AI request failed.');
+      }
+
+      const reply = data.reply || 'I could not create a reply.';
+      addMsg('jarvis', reply);
+      speak(reply);
+
+    } catch (error) {
+      addMsg('jarvis', 'AI connection failed. Please check your internet or Worker settings.');
+      setState('idle');
+    }
+}
 
   // ---------- Speech input ----------
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
