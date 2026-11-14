@@ -108,7 +108,32 @@
       ? 'मला हे अजून समजत नाही. माझा विचार करणारा भाग पुढच्या टप्प्यात जोडला जाईल. सध्या "वेळ" किंवा "तारीख" विचारा.'
       : 'I do not understand that yet. My thinking engine is added in a later step. For now, ask me the time or the date.';
   }
+async function pickContact() {
+  if (!('contacts' in navigator) || !navigator.contacts) {
+    addMsg('jarvis', 'Contact selection is not supported in this browser.');
+    return null;
+  }
 
+  try {
+    const contacts = await navigator.contacts.select(
+      ['name', 'tel'],
+      { multiple: false }
+    );
+
+    if (!contacts.length || !contacts[0].tel?.length) {
+      addMsg('jarvis', 'No contact selected.');
+      return null;
+    }
+
+    return {
+      name: contacts[0].name?.[0] || 'Contact',
+      phone: contacts[0].tel[0]
+    };
+  } catch (error) {
+    addMsg('jarvis', 'Contact selection cancelled or unavailable.');
+    return null;
+  }
+}
 async function handleInput(text) {
     text = (text || '').trim();
     if (!text) return;
