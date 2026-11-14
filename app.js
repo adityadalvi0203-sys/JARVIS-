@@ -139,7 +139,8 @@ async function handleInput(text) {
       speak(reply);
 
     } catch (error) {
-      addMsg('jarvis', 'AI connection failed. Please check your internet or Worker settings.');
+      console.error('JARVIS AI Error:', error);
+      addMsg('jarvis', 'AI Error: ' + (error.message || String(error)));
       setState('idle');
     }
 }
