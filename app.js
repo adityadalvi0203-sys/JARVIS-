@@ -112,7 +112,21 @@
 async function handleInput(text) {
     text = (text || '').trim();
     if (!text) return;
+const command = text.toLowerCase().trim();
 
+    if (/^(open|launch)\s+(youtube|you tube)(\s+please)?$/.test(command)) {
+      addMsg('user', text);
+      addMsg('jarvis', 'Opening YouTube.');
+      window.open('https://www.youtube.com/', '_blank');
+      return;
+    }
+
+    if (/^(open|launch)\s+google(\s+please)?$/.test(command)) {
+      addMsg('user', text);
+      addMsg('jarvis', 'Opening Google.');
+      window.open('https://www.google.com/', '_blank');
+      return;
+    }
     addMsg('user', text);
     setState('thinking');
 
